@@ -10,29 +10,61 @@ import UIKit
 
 class FrankenTableViewController: UITableViewController {
 
-    var dictionary = [String]()
+    @IBOutlet weak var switchBarButton: UIBarButtonItem!
+    var dictionary = [String: Int]()
+    var tableData = [String]()
+    private var switchIndicator = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loadData()
+        loadTableData()
+    }
 
+    func loadData(){
         if let url = Bundle.main.url(forResource: "Data", withExtension: "txt"),
             let data = try? Data(contentsOf: url),
             let text = String(data: data, encoding: .utf8) {
             
             var rawDict = [String: Int]()
-            for word in text.components(separatedBy: CharacterSet(charactersIn: " ,./<>?;:'[]`~!@#$%^&*()-=_+|")){
+            for word in text.lowercased().components(separatedBy: CharacterSet.whitespacesAndNewlines.union(CharacterSet.punctuationCharacters)) where word != " "{
                 if word != ""{
-                    rawDict[word.lowercased()] = (rawDict[word.lowercased()] ?? 0) + 1
+                    rawDict[word] = (rawDict[word] ?? 0) + 1
                 }
             }
-            for (key, value) in rawDict.sorted(by: { $0.1 > $1.1 }){
-                self.dictionary.append("\(key) (\(value))")
-            }
-            
+            self.dictionary = rawDict
         }
-        
+    }
+    
+    func loadTableData(){
+        self.tableData.removeAll()
+        switch self.switchIndicator{
+        case 0:
+            for (key, value) in self.dictionary.sorted(by: { $0.1 > $1.1 }){
+                self.tableData.append("\(key) (\(value))")
+            }
+        case 1:
+            for (key, value) in self.dictionary.sorted(by: { $0.0 < $1.0 }){
+                self.tableData.append("\(key) (\(value))")
+            }
+        default:
+            print("Issuse pop out here.")
+        }
     }
 
+    @IBAction func switchTapped(_ sender: UIBarButtonItem) {
+        if self.switchIndicator == 0{
+            self.switchIndicator = 1
+        }else{
+            self.switchIndicator = 0
+        }
+        print(self.switchIndicator)
+        loadTableData()
+
+        tableView.reloadData()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -54,7 +86,7 @@ class FrankenTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
 
-        cell.textLabel?.text = self.dictionary[indexPath.row]
+        cell.textLabel?.text = self.tableData[indexPath.row]
 
         return cell
     }

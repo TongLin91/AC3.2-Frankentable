@@ -32,7 +32,16 @@
                             <outlet property="delegate" destination="gLM-o7-5qh" id="wcx-Kd-wcT"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="Bef-ci-n46"/>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="Bef-ci-n46">
+                        <barButtonItem key="rightBarButtonItem" title="Switch" id="HQL-FG-jR0">
+                            <connections>
+                                <action selector="switchTapped:" destination="gLM-o7-5qh" id="XQP-Zd-irK"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="switchBarButton" destination="HQL-FG-jR0" id="3mc-Lk-mzi"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vZx-oL-GLE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
