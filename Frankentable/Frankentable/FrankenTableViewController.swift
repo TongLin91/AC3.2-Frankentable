@@ -10,6 +10,8 @@ import UIKit
 
 class FrankenTableViewController: UITableViewController {
 
+    var dictionary = [String]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -17,9 +19,18 @@ class FrankenTableViewController: UITableViewController {
             let data = try? Data(contentsOf: url),
             let text = String(data: data, encoding: .utf8) {
             
-            // here's your text
-            print(text)
+            var rawDict = [String: Int]()
+            for word in text.components(separatedBy: CharacterSet(charactersIn: " ,./<>?;:'[]`~!@#$%^&*()-=_+|")){
+                if word != ""{
+                    rawDict[word.lowercased()] = (rawDict[word.lowercased()] ?? 0) + 1
+                }
+            }
+            for (key, value) in rawDict.sorted(by: { $0.1 > $1.1 }){
+                self.dictionary.append("\(key) (\(value))")
+            }
+            
         }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -31,23 +42,23 @@ class FrankenTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return dictionary.count
     }
 
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
 
-        // Configure the cell...
+        cell.textLabel?.text = self.dictionary[indexPath.row]
 
         return cell
     }
-    */
+    
 
     /*
     // Override to support conditional editing of the table view.
